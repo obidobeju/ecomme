@@ -1,6 +1,6 @@
 // script.js
 // --- Basic product data (20 Gadget Products) ---
-const PEXELS_API_KEY = "zMdhk5QB6WkxyVU5p1mAzU9HTYHMHjJcu5piEs8OYwkwyKmNrUhSt0VC";
+const PEXELS_API_KEY = "zUF72zjQkflYRc4zMfEsUEQqyGPTpVRtSM6wjhmqsl4rxsfPcdJHf2hrv";
 
 const PHP_RATE = 58.50;
 const BACKEND_PORT = 8000;
