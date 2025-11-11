@@ -197,7 +197,7 @@ function renderCart() {
     });
 }
 
-confirmCheckoutBtn.addEventListener('click', async (e) => {
+confirmCheckoutBtn.addEventListener('click', (e) => {
     e.preventDefault();
     
     const name = document.getElementById('customer-name').value.trim();
@@ -214,45 +214,32 @@ confirmCheckoutBtn.addEventListener('click', async (e) => {
         return;
     }
 
-    const total = parseFloat(totalEl.innerText); 
+    // Generate a mock order ID (frontend-only, no database)
+    const mockOrderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    const total = parseFloat(totalEl.innerText);
 
-    const order = {
+    // Log order to console (for demo purposes)
+    console.log('📦 Order placed locally:', {
+        orderId: mockOrderId,
         customer: { name, email, address },
         items: cart,
         total: total,
-    };
+        timestamp: new Date().toLocaleString()
+    });
 
-    try {
-        const res = await fetch(`http://localhost:${BACKEND_PORT}/checkout`, { 
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(order),
-        });
+    // Show success message
+    alert(`✅ Order placed! Order ID: ${mockOrderId}. Thank you for your purchase!`);
+    
+    // Clear cart
+    cart = [];
+    saveCart();
+    renderCart();
+    checkoutForm.reset();
 
-        const data = await res.json();
-
-        if (res.ok && data.success) {
-            alert(`✅ Order placed! Order ID: ${data.orderId}. Thank you!`);
-            
-            cart = [];
-            saveCart();
-            renderCart();
-            checkoutForm.reset();
-
-            const cartOffcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('cart-section'));
-            if(cartOffcanvas) {
-                cartOffcanvas.hide();
-            }
-
-        } else {
-            throw new Error(data.message || 'Server error during checkout.');
-        }
-
-    } catch (err) {
-        console.error('Checkout failed:', err);
-        alert('❌ There was an error placing the order. Please ensure your Node.js server is running and connected to MongoDB Atlas on port 8000.');
+    // Hide cart offcanvas
+    const cartOffcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('cart-section'));
+    if(cartOffcanvas) {
+        cartOffcanvas.hide();
     }
 });
 
@@ -302,60 +289,15 @@ function logout() {
 }
 
 async function handleAuthFormSubmit(formId, endpoint) {
-    const form = document.getElementById(formId);
-    if (!form) return; 
-
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
-        
-        try {
-            const response = await fetch(`http://localhost:${BACKEND_PORT}${endpoint}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
-
-            const result = await response.json();
-            
-            if (response.ok) {
-                alert(`✅ ${result.message}`);
-                form.reset();
-                
-                if (endpoint === '/api/login' && result.token) {
-                    localStorage.setItem('kuya_store_token', result.token);
-                    updateAuthUI(); 
-                }
-                
-                const loginModal = bootstrap.Modal.getInstance(document.getElementById('login-modal'));
-                if(loginModal) {
-                    loginModal.hide();
-                }
-                
-                if (endpoint === '/api/register') {
-                    document.getElementById('toggle-login-register').click();
-                }
-
-            } else {
-                alert(`❌ Error: ${result.message || 'An error occurred.'}`);
-            }
-
-        } catch (error) {
-            console.error('Authentication request failed:', error);
-            alert('❌ A network error occurred. Check server connection on port 8000.');
-        }
-    });
+    // Auth endpoints removed - frontend-only mode
+    console.log('Auth system disabled (frontend-only mode)');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     renderProducts();
     renderCart();
-    updateAuthUI(); 
+    updateAuthUI();
     
-    handleAuthFormSubmit('register-form', '/api/register');
-    handleAuthFormSubmit('login-form', '/api/login'); 
+    // Auth system disabled - frontend-only mode (no login/register)
+    console.log('🎯 Frontend-only e-commerce mode active. Checkout works locally.');
 });
