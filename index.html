@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple E-commerce</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-dark" data-bs-theme="dark"> 
+    
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header d-flex justify-content-end p-2">
+            <button class="btn-close btn-close-white" onclick="toggleSidebar()"></button>
+        </div>
+        <ul class="nav flex-column sidebar-nav d-lg-none">
+            <li class="nav-item">
+                <a class="nav-link active" href="#"><i class="fas fa-home"></i> Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fas fa-box"></i> Products</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fas fa-info-circle"></i> About</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fas fa-envelope"></i> Contact</a>
+            </li>
+            
+            <li class="nav-item mt-3">
+                <button class="btn btn-outline-info w-75 ms-3" type="button" data-bs-toggle="modal" data-bs-target="#login-modal">
+                    <i class="fas fa-user-circle"></i> Login
+                </button>
+            </li>
+            <li class="nav-item mt-2">
+                <button class="btn btn-outline-primary w-75 ms-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#cart-section" aria-controls="cart-section">
+                    Cart (<span id="cart-count">0</span>)
+                </button>
+            </li>
+        </ul>
+    </div>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
+        <div class="container-fluid d-flex justify-content-between">
+            
+            <button class="btn btn-outline-light me-2 d-lg-none order-0" type="button" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <a class="navbar-brand mx-auto order-1 order-lg-1" href="#">KUYA'S STORE</a>
+            
+            <div class="collapse navbar-collapse order-0 order-lg-0" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="d-none d-lg-flex gap-2 order-2">
+                <button class="btn btn-outline-info" type="button" data-bs-toggle="modal" data-bs-target="#login-modal">
+                    <i class="fas fa-user-circle"></i> Login
+                </button>
+                
+                <button class="btn btn-outline-primary position-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#cart-section" aria-controls="cart-section">
+                    Cart (<span id="cart-count">0</span>)
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-5">
+        
+        <div class="alert alert-info text-center" role="alert">
+            Click the cart button to view and checkout!
+        </div>
+
+        <h2 class="mt-5 mb-4 text-center text-light">🔥 Products</h2>
+
+        <div id="product-list" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            </div>
+
+    </main>
+    
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="cart-section" aria-labelledby="cart-section-label">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="cart-section-label">Shopping Cart (<span id="cart-total-items">0</span> unique items)</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <ul id="cart-list" class="list-group list-group-flush flex-grow-1">
+                </ul>
+
+            <div class="mt-4 pt-3 border-top" id="checkout-container" style="display: none;">
+                <div id="total-container" class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">Total:</h5>
+                    <h4 class="mb-0 fw-bold text-success">$<span id="total">0.00</span></h4>
+                </div>
+
+                <h6>Checkout Details</h6>
+                
+                <form id="checkout-form">
+                    <div class="mb-3">
+                        <label for="customer-name" class="form-label visually-hidden">Name</label>
+                        <input type="text" class="form-control" id="customer-name" placeholder="Full Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="customer-email" class="form-label visually-hidden">Email</label>
+                        <input type="email" class="form-control" id="customer-email" placeholder="Email address" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="customer-address" class="form-label visually-hidden">Address</label>
+                        <textarea class="form-control" id="customer-address" rows="2" placeholder="Shipping address" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-3" id="confirm-checkout">Place Order</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="login-modal" tabindex="-1" aria-labelledby="login-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content login-register-modal-content">
+                <div class="modal-body p-0">
+                    <div class="row g-0">
+                        <div class="col-md-6 p-4 form-box" id="registration-panel">
+                            <h4 class="text-center mb-4">Register Account</h4>
+                            <form id="register-form" method="POST" action="/api/register"> 
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="form-control" name="username" placeholder="Username" required>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    <input type="email" class="form-control" name="email" placeholder="Email" required>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    <input type="password" class="form-control" name="password" placeholder="Password" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 mb-3">Register</button>
+                            </form>
+                            <p class="text-center">or register with social platforms</p>
+                            <div class="social-login-icons d-flex justify-content-center gap-3">
+                                <a href="#" class="social-icon-sm"><i class="fab fa-google"></i></a>
+                                <a href="#" class="social-icon-sm"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#" class="social-icon-sm"><i class="fab fa-github"></i></a>
+                                <a href="#" class="social-icon-sm"><i class="fab fa-linkedin-in"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 p-4 form-box d-none" id="login-panel">
+                            <h4 class="text-center mb-4">Login to Your Account</h4>
+                            <form id="login-form" method="POST" action="/api/login">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="form-control" name="username_or_email" placeholder="Username or Email" required>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    <input type="password" class="form-control" name="password" placeholder="Password" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
+                            </form>
+                            <a href="#" class="d-block text-center text-secondary mb-3">Forgot Password?</a>
+                            <p class="text-center">or login with social platforms</p>
+                            <div class="social-login-icons d-flex justify-content-center gap-3">
+                                <a href="#" class="social-icon-sm"><i class="fab fa-google"></i></a>
+                                <a href="#" class="social-icon-sm"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#" class="social-icon-sm"><i class="fab fa-github"></i></a>
+                                <a href="#" class="social-icon-sm"><i class="fab fa-linkedin-in"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 welcome-box text-center p-5">
+                            <h4 class="text-light" id="welcome-title">Welcome Back!</h4>
+                            <p class="text-light" id="welcome-text">Already have an account? Log in now.</p>
+                            <button type="button" class="btn btn-outline-light mt-3" id="toggle-login-register">Login</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-center py-4 mt-5 border-top border-secondary">
+        <p class="mb-3 text-light">&copy; 2025 KUYA'S STORE. All rights reserved.</p>
+        <div class="social-icons-container d-flex justify-content-center gap-3">
+            <a href="#" class="social-icon" id="facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="social-icon" id="instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-icon" id="twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-icon" id="youtube"><i class="fab fa-youtube"></i></a>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.querySelector('.sidebar-overlay').classList.toggle('active');
+        }
+
+        // Login/Register Toggle Script
+        document.getElementById('toggle-login-register').addEventListener('click', function() {
+            const loginPanel = document.getElementById('login-panel');
+            const registerPanel = document.getElementById('registration-panel');
+            const toggleButton = this;
+            const welcomeTitle = document.getElementById('welcome-title');
+            const welcomeText = document.getElementById('welcome-text');
+
+            if (loginPanel.classList.contains('d-none')) {
+                // Switch to Login
+                loginPanel.classList.remove('d-none');
+                registerPanel.classList.add('d-none');
+                toggleButton.textContent = 'Register';
+                welcomeTitle.textContent = 'Hello Friend!';
+                welcomeText.textContent = 'New here? Register to get started!';
+            } else {
+                // Switch to Register
+                loginPanel.classList.add('d-none');
+                registerPanel.classList.remove('d-none');
+                toggleButton.textContent = 'Login';
+                welcomeTitle.textContent = 'Welcome Back!';
+                welcomeText.textContent = 'Already have an account? Log in now.';
+            }
+        });
+    </script>
+    
+    <script src="script.js"></script>
+
+</body>
+</html>
