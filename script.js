@@ -214,34 +214,117 @@ confirmCheckoutBtn.addEventListener('click', (e) => {
         return;
     }
 
-    // Generate a mock order ID (frontend-only, no database)
-    const mockOrderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    // Load existing orders from localStorage
+    const ordersRaw = localStorage.getItem('orders') || '[]';
+    let orders;
+    try { orders = JSON.parse(ordersRaw) || []; } catch { orders = []; }
+
+    const orderNumber = orders.length + 1;
+    const orderId = `ORD-${Date.now().toString(36).toUpperCase()}-${orderNumber}`;
+
     const total = parseFloat(totalEl.innerText);
 
-    // Log order to console (for demo purposes)
-    console.log('📦 Order placed locally:', {
-        orderId: mockOrderId,
+    const order = {
+        id: orderId,
+        number: orderNumber,
         customer: { name, email, address },
         items: cart,
         total: total,
-        timestamp: new Date().toLocaleString()
-    });
+        createdAt: new Date().toISOString()
+    };
 
-    // Show success message
-    alert(`✅ Order placed! Order ID: ${mockOrderId}. Thank you for your purchase!`);
-    
-    // Clear cart
+    // Save order to localStorage
+    orders.push(order);
+    localStorage.setItem('orders', JSON.stringify(orders));
+    localStorage.setItem('lastOrder', JSON.stringify(order));
+
+    // Clear cart from localStorage
+    localStorage.removeItem('cart');
+
+    // Update UI
     cart = [];
-    saveCart();
     renderCart();
     checkoutForm.reset();
 
-    // Hide cart offcanvas
+    // Close offcanvas
     const cartOffcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('cart-section'));
     if(cartOffcanvas) {
         cartOffcanvas.hide();
     }
+
+    // Show success toast
+    showOrderSuccess(order);
 });
+
+function parseJwt(token) {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+    } catch (e) {
+        return null;
+    }
+}
+
+function showOrderSuccess(order) {
+  // Create a top-right toast container if missing
+  const containerId = 'toast-container';
+  let container = document.getElementById(containerId);
+  if (!container) {
+    container = document.createElement('div');
+    container.id = containerId;
+    container.style.position = 'fixed';
+    container.style.top = '1rem';
+    container.style.right = '1rem';
+    container.style.zIndex = '1080';
+    document.body.appendChild(container);
+  }
+
+  // If Bootstrap Toast is available, use it
+  if (window.bootstrap?.Toast) {
+    const toastEl = document.createElement('div');
+    toastEl.className = 'toast align-items-center text-bg-success border-0';
+    toastEl.setAttribute('role', 'alert');
+    toastEl.setAttribute('aria-live', 'assertive');
+    toastEl.setAttribute('aria-atomic', 'true');
+    toastEl.style.minWidth = '240px';
+
+    toastEl.innerHTML = `
+      <div class="d-flex">
+        <div class="toast-body">
+          <strong class="d-block">Order placed</strong>
+          <small class="d-block text-white-50">ID: ${order.id}</small>
+          <div class="mt-1">Thank you, ${order.customer.name}!</div>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    `;
+
+    container.appendChild(toastEl);
+    const toast = new bootstrap.Toast(toastEl, { delay: 4500 });
+    toast.show();
+    toastEl.addEventListener('hidden.bs.toast', () => toastEl.remove());
+  } else {
+    // Fallback: simple dismissible alert
+    const alertEl = document.createElement('div');
+    alertEl.className = 'alert alert-success alert-dismissible fade show';
+    alertEl.style.minWidth = '240px';
+    alertEl.style.marginBottom = '0.5rem';
+    alertEl.innerHTML = `
+      <strong>Order placed</strong><br><small>ID: ${order.id}</small>
+      <div>Thank you, ${order.customer.name}!</div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    container.appendChild(alertEl);
+    setTimeout(() => {
+      alertEl.classList.remove('show');
+      alertEl.remove();
+    }, 4500);
+  }
+}
 
 function parseJwt(token) {
     try {
