@@ -30,11 +30,6 @@
                 <a class="nav-link" href="#"><i class="fas fa-envelope"></i> Contact</a>
             </li>
             
-            <li class="nav-item mt-3">
-                <button class="btn btn-outline-info w-75 ms-3" type="button" data-bs-toggle="modal" data-bs-target="#login-modal">
-                    <i class="fas fa-user-circle"></i> Login
-                </button>
-            </li>
             <li class="nav-item mt-2">
                 <button class="btn btn-outline-primary w-75 ms-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#cart-section" aria-controls="cart-section">
                     Cart (<span id="cart-count">0</span>)
@@ -71,10 +66,6 @@
             </div>
             
             <div class="d-none d-lg-flex gap-2 order-2">
-                <button class="btn btn-outline-info" type="button" data-bs-toggle="modal" data-bs-target="#login-modal">
-                    <i class="fas fa-user-circle"></i> Login
-                </button>
-                
                 <button class="btn btn-outline-primary position-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#cart-section" aria-controls="cart-section">
                     Cart (<span id="cart-count">0</span>)
                 </button>
@@ -131,71 +122,6 @@
         </div>
     </div>
 
-    <div class="modal fade" id="login-modal" tabindex="-1" aria-labelledby="login-modal-label" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content login-register-modal-content">
-                <div class="modal-body p-0">
-                    <div class="row g-0">
-                        <div class="col-md-6 p-4 form-box" id="registration-panel">
-                            <h4 class="text-center mb-4">Register Account</h4>
-                            <form id="register-form" method="POST" action="/api/register"> 
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                    <input type="text" class="form-control" name="username" placeholder="Username" required>
-                                </div>
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                    <input type="email" class="form-control" name="email" placeholder="Email" required>
-                                </div>
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" class="form-control" name="password" placeholder="Password" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100 mb-3">Register</button>
-                            </form>
-                            <p class="text-center">or register with social platforms</p>
-                            <div class="social-login-icons d-flex justify-content-center gap-3">
-                                <a href="#" class="social-icon-sm"><i class="fab fa-google"></i></a>
-                                <a href="#" class="social-icon-sm"><i class="fab fa-facebook-f"></i></a>
-                                <a href="#" class="social-icon-sm"><i class="fab fa-github"></i></a>
-                                <a href="#" class="social-icon-sm"><i class="fab fa-linkedin-in"></i></a>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 p-4 form-box d-none" id="login-panel">
-                            <h4 class="text-center mb-4">Login to Your Account</h4>
-                            <form id="login-form" method="POST" action="/api/login">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                    <input type="text" class="form-control" name="username_or_email" placeholder="Username or Email" required>
-                                </div>
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" class="form-control" name="password" placeholder="Password" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
-                            </form>
-                            <a href="#" class="d-block text-center text-secondary mb-3">Forgot Password?</a>
-                            <p class="text-center">or login with social platforms</p>
-                            <div class="social-login-icons d-flex justify-content-center gap-3">
-                                <a href="#" class="social-icon-sm"><i class="fab fa-google"></i></a>
-                                <a href="#" class="social-icon-sm"><i class="fab fa-facebook-f"></i></a>
-                                <a href="#" class="social-icon-sm"><i class="fab fa-github"></i></a>
-                                <a href="#" class="social-icon-sm"><i class="fab fa-linkedin-in"></i></a>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 welcome-box text-center p-5">
-                            <h4 class="text-light" id="welcome-title">Welcome Back!</h4>
-                            <p class="text-light" id="welcome-text">Already have an account? Log in now.</p>
-                            <button type="button" class="btn btn-outline-light mt-3" id="toggle-login-register">Login</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <footer class="bg-dark text-center py-4 mt-5 border-top border-secondary">
         <p class="mb-3 text-light">&copy; 2025 KUYA'S STORE. All rights reserved.</p>
         <div class="social-icons-container d-flex justify-content-center gap-3">
@@ -213,31 +139,6 @@
             document.getElementById('sidebar').classList.toggle('active');
             document.querySelector('.sidebar-overlay').classList.toggle('active');
         }
-
-        // Login/Register Toggle Script
-        document.getElementById('toggle-login-register').addEventListener('click', function() {
-            const loginPanel = document.getElementById('login-panel');
-            const registerPanel = document.getElementById('registration-panel');
-            const toggleButton = this;
-            const welcomeTitle = document.getElementById('welcome-title');
-            const welcomeText = document.getElementById('welcome-text');
-
-            if (loginPanel.classList.contains('d-none')) {
-                // Switch to Login
-                loginPanel.classList.remove('d-none');
-                registerPanel.classList.add('d-none');
-                toggleButton.textContent = 'Register';
-                welcomeTitle.textContent = 'Hello Friend!';
-                welcomeText.textContent = 'New here? Register to get started!';
-            } else {
-                // Switch to Register
-                loginPanel.classList.add('d-none');
-                registerPanel.classList.remove('d-none');
-                toggleButton.textContent = 'Login';
-                welcomeTitle.textContent = 'Welcome Back!';
-                welcomeText.textContent = 'Already have an account? Log in now.';
-            }
-        });
     </script>
     
     <script src="script.js"></script>
