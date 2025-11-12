@@ -71,11 +71,11 @@ async function fetchProductImage(productOrQuery) {
         if (!res.ok) throw new Error(`Pexels API returned status ${res.status}`);
         const data = await res.json();
         const photo = data.photos?.[0];
-        if (!photo) return `https://picsum.photos/100/70?random=${Math.random()}`;
+    if (!photo) return `https://picsum.photos/200/140?random=${Math.random()}`;
         return photo.src.tiny || photo.src.small || photo.src.medium || photo.src.original;
     } catch (err) {
         console.error('Error fetching image for', query, err);
-        return `https://picsum.photos/100/70?random=${Math.random()}`;
+        return `https://picsum.photos/200/140?random=${Math.random()}`;
     }
 }
 
@@ -95,7 +95,7 @@ function renderProducts() {
             <div class="card h-100 shadow-sm d-flex flex-column">
                 <div class="p-3 d-flex justify-content-center">
                     <img src="${prod.image}" alt="${prod.name}" 
-                         class="product-thumb" style="width:100px;height:70px;object-fit:cover;border-radius:4px;">
+                         class="product-thumb" style="width:200px;height:140px;object-fit:cover;border-radius:6px;">
                 </div>
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">${prod.name}</h5>
