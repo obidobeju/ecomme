@@ -117,6 +117,13 @@ function renderProducts() {
 }
 
 function addToCart(id) {
+    // Check if user is authenticated
+    if (!isAuthenticated()) {
+        alert('Please log in to add items to your cart.');
+        window.location.href = 'login.html';
+        return;
+    }
+
     const prod = productList.find(p => p.id === id);
     const item = cart.find(i => i.id === id);
 
@@ -227,8 +234,15 @@ function renderCart() {
     });
 }
 
-confirmCheckoutBtn.addEventListener('click', (e) => {
+confirmCheckoutBtn.addEventListener('click', async (e) => {
     e.preventDefault();
+
+    // Check authentication
+    if (!isAuthenticated()) {
+        alert('Please log in to complete your order.');
+        window.location.href = 'login.html';
+        return;
+    }
     
     const name = document.getElementById('customer-name').value.trim();
     const email = document.getElementById('customer-email').value.trim();
@@ -244,46 +258,37 @@ confirmCheckoutBtn.addEventListener('click', (e) => {
         return;
     }
 
-    // Load existing orders from localStorage
-    const ordersRaw = localStorage.getItem('orders') || '[]';
-    let orders;
-    try { orders = JSON.parse(ordersRaw) || []; } catch { orders = []; }
+    try {
+        const total = parseFloat(totalEl.innerText);
+        
+        // Use authenticated API to create order
+        const result = await createOrder(
+            { name, email, address },
+            cart,
+            total
+        );
 
-    const orderNumber = orders.length + 1;
-    const orderId = `ORD-${Date.now().toString(36).toUpperCase()}-${orderNumber}`;
+        // Clear cart from localStorage
+        localStorage.removeItem('cart');
 
-    const total = parseFloat(totalEl.innerText);
+        // Update UI
+        cart = [];
+        renderCart();
+        checkoutForm.reset();
 
-    const order = {
-        id: orderId,
-        number: orderNumber,
-        customer: { name, email, address },
-        items: cart,
-        total: total,
-        createdAt: new Date().toISOString()
-    };
+        // Close offcanvas
+        const cartOffcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('cart-section'));
+        if(cartOffcanvas) {
+            cartOffcanvas.hide();
+        }
 
-    // Save order to localStorage
-    orders.push(order);
-    localStorage.setItem('orders', JSON.stringify(orders));
-    localStorage.setItem('lastOrder', JSON.stringify(order));
-
-    // Clear cart from localStorage
-    localStorage.removeItem('cart');
-
-    // Update UI
-    cart = [];
-    renderCart();
-    checkoutForm.reset();
-
-    // Close offcanvas
-    const cartOffcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('cart-section'));
-    if(cartOffcanvas) {
-        cartOffcanvas.hide();
+        // Show success message
+        alert(`✅ Order placed successfully!\nOrder ID: ${result.orderId}\nThank you for your purchase!`);
+        
+    } catch (error) {
+        alert(`❌ Checkout failed: ${error.message}`);
+        console.error('Checkout error:', error);
     }
-
-    // Show success toast
-    showOrderSuccess(order);
 });
 
 function parseJwt(token) {
@@ -409,8 +414,4 @@ async function handleAuthFormSubmit(formId, endpoint) {
 document.addEventListener('DOMContentLoaded', () => {
     renderProducts();
     renderCart();
-    updateAuthUI();
-    
-    // Auth system disabled - frontend-only mode (no login/register)
-    console.log('🎯 Frontend-only e-commerce mode active. Checkout works locally.');
 });

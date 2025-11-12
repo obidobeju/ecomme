@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - TECHHUB</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-container {
+            background-color: #1f2937;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+        }
+        
+        .admin-header h1 {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .admin-header p {
+            margin: 0;
+            opacity: 0.9;
+        }
+        
+        .tabs-container {
+            background-color: #374151;
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid #4b5563;
+        }
+        
+        .nav-tabs {
+            border-bottom: 2px solid #4b5563;
+        }
+        
+        .nav-link {
+            color: #a3a3a3;
+            border: none;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: #3b82f6;
+            border-color: transparent;
+        }
+        
+        .nav-link.active {
+            background-color: #3b82f6;
+            color: white;
+            border-color: transparent;
+        }
+        
+        .tab-pane {
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .form-control, .form-select {
+            background-color: #1f2937;
+            border: 1px solid #4b5563;
+            color: #f3f4f6;
+            border-radius: 8px;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background-color: #1f2937;
+            color: #f3f4f6;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+        }
+        
+        .form-label {
+            color: #f3f4f6;
+            font-weight: 600;
+        }
+        
+        .product-card {
+            background-color: #374151;
+            border: 1px solid #4b5563;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .product-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.2);
+        }
+        
+        .product-name {
+            color: #f3f4f6;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-info {
+            color: #a3a3a3;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .product-price {
+            color: #10b981;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-action {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .btn-success {
+            background-color: #10b981;
+            border-color: #10b981;
+        }
+        
+        .btn-success:hover {
+            background-color: #059669;
+            border-color: #059669;
+        }
+        
+        .btn-warning {
+            background-color: #f59e0b;
+            border-color: #f59e0b;
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background-color: #d97706;
+            border-color: #d97706;
+            color: white;
+        }
+        
+        .btn-danger {
+            background-color: #ef4444;
+            border-color: #ef4444;
+        }
+        
+        .btn-danger:hover {
+            background-color: #dc2626;
+            border-color: #dc2626;
+        }
+        
+        .alert {
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .table {
+            color: #f3f4f6;
+        }
+        
+        .table-dark {
+            background-color: #374151;
+        }
+        
+        .table-dark tbody tr {
+            border-color: #4b5563;
+        }
+        
+        .table-dark tbody tr:hover {
+            background-color: #4b5563;
+        }
+        
+        .modal-content {
+            background-color: #374151;
+            border-color: #4b5563;
+        }
+        
+        .modal-header {
+            border-color: #4b5563;
+        }
+        
+        .modal-title {
+            color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="bg-dark" data-bs-theme="dark">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top" style="border-bottom: 3px solid #3b82f6;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">TECHHUB Admin</a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html"><i class="fas fa-home me-1"></i> Back to Store</a>
+                    </li>
+                    <li class="nav-item">
+                        <span class="nav-link" style="cursor: default;">👤 <span id="admin-username">Admin</span></span>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-sm btn-outline-danger" onclick="logout()"><i class="fas fa-sign-out-alt me-1"></i> Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>⚙️ Admin Dashboard</h1>
+            <p>Manage your products and orders</p>
+        </div>
+
+        <div id="alert-container"></div>
+
+        <div class="tabs-container">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="products-tab" data-bs-toggle="tab" data-bs-target="#products" type="button" role="tab" aria-controls="products" aria-selected="true">
+                        <i class="fas fa-box me-2"></i>Products
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab" aria-controls="orders" aria-selected="false">
+                        <i class="fas fa-shopping-bag me-2"></i>Orders
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content mt-4">
+                <!-- Products Tab -->
+                <div class="tab-pane fade show active" id="products" role="tabpanel" aria-labelledby="products-tab">
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <h4 class="text-light mb-3">Product List</h4>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                                <i class="fas fa-plus me-2"></i>Add New Product
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="products-list" class="row">
+                        <!-- Products will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Orders Tab -->
+                <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <h4 class="text-light mb-3">All Orders</h4>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover" id="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Email</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-tbody">
+                                <!-- Orders will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Product Modal -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="product-form">
+                        <div class="mb-3">
+                            <label for="product-name" class="form-label">Product Name</label>
+                            <input type="text" class="form-control" id="product-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="product-desc" class="form-label">Description</label>
+                            <textarea class="form-control" id="product-desc" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="product-price" class="form-label">Price (₱)</label>
+                            <input type="number" class="form-control" id="product-price" step="0.01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="product-stock" class="form-label">Stock</label>
+                            <input type="number" class="form-control" id="product-stock" step="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="product-image" class="form-label">Image URL</label>
+                            <input type="text" class="form-control" id="product-image" placeholder="https://...">
+                        </div>
+                        <input type="hidden" id="product-id">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="save-product-btn">Save Product</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        // Check admin auth
+        requireAdmin();
+
+        const adminUsername = getCurrentUser().username;
+        document.getElementById('admin-username').textContent = adminUsername;
+
+        const alertContainer = document.getElementById('alert-container');
+        const addProductModal = new bootstrap.Modal(document.getElementById('addProductModal'));
+
+        // Show alert
+        function showAlert(message, type = 'info') {
+            const alertClass = `alert-${type}`;
+            const icon = type === 'success' ? '✓' : type === 'danger' ? '✗' : 'ℹ';
+            alertContainer.innerHTML = `
+                <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-circle' : 'info-circle'} me-2"></i>${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            setTimeout(() => {
+                const alert = alertContainer.querySelector('.alert');
+                if (alert) alert.remove();
+            }, 5000);
+        }
+
+        // Load and display products
+        async function loadProducts() {
+            try {
+                const products = await getProducts();
+                const productsList = document.getElementById('products-list');
+                
+                if (products.length === 0) {
+                    productsList.innerHTML = '<div class="col-12"><div class="alert alert-info">No products yet. Create your first product!</div></div>';
+                    return;
+                }
+
+                productsList.innerHTML = products.map(product => `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="product-card">
+                            ${product.image ? `<img src="${product.image}" alt="${product.name}" style="width:100%;height:200px;object-fit:cover;border-radius:6px;margin-bottom:1rem;">` : ''}
+                            <div class="product-name">${product.name}</div>
+                            <div class="product-info">${product.desc || 'No description'}</div>
+                            <div class="product-info"><strong>Stock:</strong> ${product.stock}</div>
+                            <div class="product-price">₱${product.price.toFixed(2)}</div>
+                            <div>
+                                <button class="btn btn-action btn-warning btn-sm" onclick="editProduct('${product._id}', '${product.name}', '${product.price}', '${product.stock}', '${product.desc || ''}', '${product.image || ''}')">
+                                    <i class="fas fa-edit me-1"></i>Edit
+                                </button>
+                                <button class="btn btn-action btn-danger btn-sm" onclick="deleteProduct('${product._id}', '${product.name}')">
+                                    <i class="fas fa-trash me-1"></i>Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                showAlert('Failed to load products: ' + error.message, 'danger');
+            }
+        }
+
+        // Load and display orders
+        async function loadOrders() {
+            try {
+                const orders = await getOrders();
+                const ordersTbody = document.getElementById('orders-tbody');
+                
+                if (orders.length === 0) {
+                    ordersTbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">No orders yet</td></tr>';
+                    return;
+                }
+
+                ordersTbody.innerHTML = orders.map(order => `
+                    <tr>
+                        <td><small>${order._id}</small></td>
+                        <td>${order.customer?.name || 'N/A'}</td>
+                        <td><small>${order.customer?.email || 'N/A'}</small></td>
+                        <td><strong class="text-success">₱${order.total.toFixed(2)}</strong></td>
+                        <td>
+                            <select class="form-select form-select-sm" style="width:auto;display:inline;background-color:#1f2937;color:#10b981;" onchange="updateOrderStatus('${order._id}', this.value)">
+                                <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>Processing</option>
+                                <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Shipped</option>
+                                <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
+                                <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                            </select>
+                        </td>
+                        <td><small>${new Date(order.createdAt).toLocaleDateString()}</small></td>
+                        <td>
+                            <button class="btn btn-info btn-sm" onclick="viewOrderDetails('${order._id}')">
+                                <i class="fas fa-eye me-1"></i>View
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                showAlert('Failed to load orders: ' + error.message, 'danger');
+            }
+        }
+
+        // Edit product
+        function editProduct(id, name, price, stock, desc, image) {
+            document.getElementById('product-id').value = id;
+            document.getElementById('product-name').value = name;
+            document.getElementById('product-price').value = price;
+            document.getElementById('product-stock').value = stock;
+            document.getElementById('product-desc').value = desc;
+            document.getElementById('product-image').value = image;
+            document.getElementById('addProductModalLabel').textContent = 'Edit Product';
+            addProductModal.show();
+        }
+
+        // Save product (create or update)
+        document.getElementById('save-product-btn').addEventListener('click', async () => {
+            const id = document.getElementById('product-id').value;
+            const name = document.getElementById('product-name').value.trim();
+            const price = parseFloat(document.getElementById('product-price').value);
+            const stock = parseInt(document.getElementById('product-stock').value);
+            const desc = document.getElementById('product-desc').value.trim();
+            const image = document.getElementById('product-image').value.trim();
+
+            if (!name || !price || stock === '') {
+                showAlert('Please fill in all required fields', 'danger');
+                return;
+            }
+
+            try {
+                if (id) {
+                    // Update existing product
+                    await updateProduct(id, { name, price, stock, desc, image });
+                    showAlert('Product updated successfully!', 'success');
+                } else {
+                    // Create new product
+                    await createProduct({ name, price, stock, desc, image });
+                    showAlert('Product created successfully!', 'success');
+                }
+
+                // Reset form
+                document.getElementById('product-form').reset();
+                document.getElementById('product-id').value = '';
+                document.getElementById('addProductModalLabel').textContent = 'Add New Product';
+                addProductModal.hide();
+
+                // Reload products
+                loadProducts();
+            } catch (error) {
+                showAlert('Error saving product: ' + error.message, 'danger');
+            }
+        });
+
+        // Delete product
+        async function deleteProduct(id, name) {
+            if (!confirm(`Are you sure you want to delete "${name}"?`)) {
+                return;
+            }
+
+            try {
+                await deleteProduct(id);
+                showAlert('Product deleted successfully!', 'success');
+                loadProducts();
+            } catch (error) {
+                showAlert('Error deleting product: ' + error.message, 'danger');
+            }
+        }
+
+        // Update order status
+        async function updateOrderStatus(orderId, status) {
+            try {
+                await updateOrderStatus(orderId, status);
+                showAlert('Order status updated!', 'success');
+                loadOrders();
+            } catch (error) {
+                showAlert('Error updating order: ' + error.message, 'danger');
+            }
+        }
+
+        // View order details
+        function viewOrderDetails(orderId) {
+            alert('Order Details: ' + orderId + '\n\nFull order details view coming soon!');
+        }
+
+        // Reset form when modal is closed
+        document.getElementById('addProductModal').addEventListener('hidden.bs.modal', function() {
+            document.getElementById('product-form').reset();
+            document.getElementById('product-id').value = '';
+            document.getElementById('addProductModalLabel').textContent = 'Add New Product';
+        });
+
+        // Load data on page load
+        loadProducts();
+        loadOrders();
+
+        // Reload every 30 seconds
+        setInterval(() => {
+            loadProducts();
+            loadOrders();
+        }, 30000);
+    </script>
+</body>
+</html>
