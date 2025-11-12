@@ -392,7 +392,7 @@
                                 <button class="btn btn-action btn-warning btn-sm" onclick="editProduct('${product._id}', '${product.name}', '${product.price}', '${product.stock}', '${product.desc || ''}', '${product.image || ''}')">
                                     <i class="fas fa-edit me-1"></i>Edit
                                 </button>
-                                <button class="btn btn-action btn-danger btn-sm" onclick="deleteProduct('${product._id}', '${product.name}')">
+                                <button class="btn btn-action btn-danger btn-sm" onclick="removeProduct('${product._id}', '${product.name}')">
                                     <i class="fas fa-trash me-1"></i>Delete
                                 </button>
                             </div>
@@ -493,14 +493,15 @@
             }
         });
 
-        // Delete product
-        async function deleteProduct(id, name) {
+        // Delete product (renamed to avoid conflict with auth.js function)
+        async function removeProduct(id, name) {
             if (!confirm(`Are you sure you want to delete "${name}"?`)) {
                 return;
             }
 
             try {
-                await deleteProduct(id);
+                // Call the deleteProduct function from auth.js (in global scope)
+                await window.deleteProduct(id);
                 showAlert('Product deleted successfully!', 'success');
                 loadProducts();
             } catch (error) {

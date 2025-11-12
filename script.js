@@ -83,40 +83,69 @@ function saveCart() {
     localStorage.setItem('cart', JSON.stringify(cart));
 }
 
-function renderProducts() {
-    productListEl.innerHTML = '';
+async function renderProducts() {
+    productListEl.innerHTML = '<div class="col-12"><p class="text-center text-muted">Loading products...</p></div>';
 
-    productList.forEach(prod => {
-        const col = document.createElement('div');
-        col.className = 'col';
+    try {
+        // Fetch products from backend API
+        const response = await fetch(`http://192.168.1.12:8000/api/products`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch products: ${response.status}`);
+        }
+        const data = await response.json();
+        let productsToShow = data.products || data || [];
 
-        // Render a small image (100x70) at the top of the card using local SVG asset.
-        col.innerHTML = `
-            <div class="card h-100 shadow-sm d-flex flex-column">
-                <div class="p-3 d-flex justify-content-center">
-                    <img src="${prod.image}" alt="${prod.name}" 
-                         class="product-thumb" style="width:200px;height:140px;object-fit:cover;border-radius:6px;">
+        if (productsToShow.length === 0) {
+            productListEl.innerHTML = '<div class="col-12"><p class="text-center text-muted">No products available. Check back soon!</p></div>';
+            return;
+        }
+
+        productListEl.innerHTML = '';
+
+        for (const prod of productsToShow) {
+            const col = document.createElement('div');
+            col.className = 'col';
+
+            // Use the image from backend, or fetch from Pexels if not available
+            let imageUrl = prod.image;
+            if (!imageUrl || imageUrl === '') {
+                // Fetch realistic image from Pexels
+                imageUrl = await fetchProductImage(prod.name);
+            }
+
+            col.innerHTML = `
+                <div class="card h-100 shadow-sm d-flex flex-column">
+                    <div class="p-3 d-flex justify-content-center">
+                        <img src="${imageUrl}" alt="${prod.name}" 
+                             class="product-thumb" style="width:200px;height:140px;object-fit:cover;border-radius:6px;">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">${prod.name}</h5>
+                        <p class="card-text text-secondary">${prod.desc || 'Premium tech product'}</p>
+                        <p class="card-text fw-bold mt-auto fs-4 text-success">₱${parseFloat(prod.price).toFixed(2)}</p>
+                        <p class="card-text text-muted small">Stock: ${prod.stock || 0}</p>
+                        <button class="btn btn-primary mt-3 btn-add-to-cart" data-id="${prod._id || prod.id}" data-name="${prod.name}" data-price="${prod.price}">Add to Cart</button>
+                    </div>
                 </div>
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">${prod.name}</h5>
-                    <p class="card-text text-secondary">${prod.desc}</p>
-                    <p class="card-text fw-bold mt-auto fs-4 text-success">₱${prod.price.toFixed(2)}</p>
-                    <button class="btn btn-primary mt-3 btn-add-to-cart" data-id="${prod.id}">Add to Cart</button>
-                </div>
-            </div>
-        `;
-        productListEl.appendChild(col);
-    });
+            `;
+            productListEl.appendChild(col);
+        }
 
-    document.querySelectorAll('.btn-add-to-cart').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const id = parseInt(e.target.dataset.id);
-            addToCart(id);
+        document.querySelectorAll('.btn-add-to-cart').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const id = e.target.dataset.id;
+                const name = e.target.dataset.name;
+                const price = parseFloat(e.target.dataset.price);
+                addToCart(id, name, price);
+            });
         });
-    });
+    } catch (error) {
+        console.error('Error rendering products:', error);
+        productListEl.innerHTML = `<div class="col-12"><div class="alert alert-danger">Error loading products: ${error.message}</div></div>`;
+    }
 }
 
-function addToCart(id) {
+function addToCart(id, name, price) {
     // Check if user is authenticated
     if (!isAuthenticated()) {
         alert('Please log in to add items to your cart.');
@@ -124,29 +153,23 @@ function addToCart(id) {
         return;
     }
 
-    const prod = productList.find(p => p.id === id);
     const item = cart.find(i => i.id === id);
 
-    if (prod && prod.stock <= 0) {
-        alert(`${prod.name} is currently out of stock!`);
-        return;
-    }
-
     if (item) {
-        const currentStock = productList.find(p => p.id === id).stock;
-        if (item.qty + 1 > currentStock) {
-            alert(`Maximum stock reached for ${prod.name}!`);
-            return;
-        }
         item.qty += 1;
     } else {
-        if (prod) {
-            cart.push({ id: prod.id, name: prod.name, price: prod.price, qty: 1 });
-        }
+        // Create new cart item with data from product
+        cart.push({ 
+            id: id, 
+            name: name || 'Unknown Product', 
+            price: parseFloat(price) || 0, 
+            qty: 1 
+        });
     }
 
     saveCart();
     renderCart();
+    alert(`${name} added to cart!`);
 }
 
 function updateCart(id, delta) {
