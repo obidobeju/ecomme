@@ -39,19 +39,26 @@ const productList = [
 
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 async function fetchProductImage(query) {
-  try {
-    const res = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query + " shoes")}&per_page=1`, {
-      headers: {
-        Authorization: PEXELS_API_KEY
-      }
-    });
-    const data = await res.json();
-    // Return the first image URL or a fallback if none found
-    return data.photos?.[0]?.src?.medium || "https://picsum.photos/400/280?random=" + Math.random();
-  } catch (err) {
-    console.error("Error fetching image for", query, err);
-    return "https://picsum.photos/400/280?random=" + Math.random(); // fallback image
-  }
+    // Try to fetch an image from Pexels using the product name.
+    // Note: the API key must be valid and the browser must allow the request (CORS).
+    // If the API fails or returns no photos, return a small placeholder sized 100x70.
+    try {
+        const res = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=1`, {
+            headers: {
+                Authorization: PEXELS_API_KEY
+            }
+        });
+        if (!res.ok) throw new Error(`Pexels API returned status ${res.status}`);
+        const data = await res.json();
+        const photo = data.photos?.[0];
+        if (!photo) return `https://picsum.photos/200/140?random=${Math.random()}`;
+        // prefer a small/tiny size then fall back to medium/original
+        return photo.src.tiny || photo.src.small || photo.src.medium || photo.src.original;
+    } catch (err) {
+        console.error("Error fetching image for", query, err);
+        // Small placeholder (100x70) so layout stays consistent
+        return `https://picsum.photos/200/140?random=${Math.random()}`;
+    }
 }
 
 function saveCart() {
@@ -65,8 +72,14 @@ function renderProducts() {
         const col = document.createElement('div');
         col.className = 'col';
 
+        // Render a small image (100x70) at the top of the card. We'll set a placeholder
+        // first and then asynchronously fetch a better image from the Pexels API.
         col.innerHTML = `
-            <div class="card h-100 shadow-sm">
+            <div class="card h-100 shadow-sm d-flex flex-column">
+                <div class="p-3 d-flex justify-content-center">
+                    <img src="https://picsum.photos/100/70?random=${Math.random()}" alt="${prod.name}" 
+                         class="product-thumb" style="width:100px;height:70px;object-fit:cover;border-radius:4px;">
+                </div>
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">${prod.name}</h5>
                     <p class="card-text text-secondary">${prod.desc}</p>
@@ -75,7 +88,20 @@ function renderProducts() {
                 </div>
             </div>
         `;
+        // After we've appended the element, try to fetch a relevant image.
         productListEl.appendChild(col);
+
+        // Asynchronously replace the placeholder with a fetched image.
+        (async () => {
+            const imgEl = col.querySelector('img.product-thumb');
+            try {
+                const src = await fetchProductImage(prod.name);
+                if (imgEl) imgEl.src = src;
+            } catch (e) {
+                // leave placeholder if fetching fails
+                console.warn('Image fetch failed for', prod.name, e);
+            }
+        })();
     });
 
     document.querySelectorAll('.btn-add-to-cart').forEach(button => {
