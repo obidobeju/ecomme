@@ -1,5 +1,5 @@
 // auth.js - Authentication handler
-const BACKEND_URL = `http://localhost:8000`;
+const BACKEND_URL = `http://192.168.1.12:8000`;
 
 // Get auth token from localStorage
 function getAuthToken() {

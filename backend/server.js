@@ -318,7 +318,8 @@ app.delete('/api/orders/:id', verifyAdmin, async (req, res) => {
 });
 
 // --- SERVER START ---
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`✅ Server is running on http://localhost:${PORT}`);
+    console.log(`✅ Also accessible at http://192.168.1.12:${PORT}`);
     console.log(`API ready. MongoDB connection state: ${mongoose.connection.readyState}`);
 });
