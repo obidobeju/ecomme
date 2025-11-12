@@ -14,50 +14,68 @@ const confirmCheckoutBtn = document.getElementById('confirm-checkout');
 const cartTotalItemsEl = document.getElementById('cart-total-items');
 const authButtonContainer = document.getElementById('auth-button-container');
 
-const productList = [
-    { id: 1, name: "Laptop Pro X", price: 75988.50, desc: "High-performance laptop for professionals.", stock: 10 },
-    { id: 2, name: "Wireless Headphones Z", price: 11699.42, desc: "Noise-cancelling headphones with deep bass.", stock: 25 },
-    { id: 3, name: "Smartphone 15 Ultra", price: 58441.50, desc: "Latest flagship smartphone with advanced camera.", stock: 15 },
-    { id: 4, name: "Smart Watch 6", price: 14595.75, desc: "Fitness and health tracker with 5-day battery life.", stock: 30 },
-    { id: 5, name: "Portable SSD 1TB", price: 5264.42, desc: "Ultra-fast external storage for backups and transfers.", stock: 40 },
-    { id: 6, name: "Gaming Mouse RGB", price: 2924.42, desc: "Ergonomic gaming mouse with customizable RGB lighting.", stock: 50 },
-    { id: 7, name: "Mechanical Keyboard", price: 6950.10, desc: "Tactile mechanical keyboard for typing and gaming.", stock: 20 },
-    { id: 8, name: "Bluetooth Speaker Mini", price: 2047.50, desc: "Pocket-sized speaker with powerful sound.", stock: 60 },
-    { id: 9, name: "4K Webcam", price: 4679.42, desc: "High-resolution webcam for streaming and video calls.", stock: 18 },
-    { id: 10, name: "E-Reader Paperbook 4", price: 7604.94, desc: "Glare-free screen for comfortable reading.", stock: 22 },
-    { id: 11, name: "Mesh Wi-Fi System", price: 11641.50, desc: "Blanket your home with fast, reliable Wi-Fi.", stock: 12 },
-    { id: 12, name: "Drone Explorer SE", price: 20474.92, desc: "Foldable drone with 4K video recording.", stock: 8 },
-    { id: 13, name: "USB-C Hub 7-in-1", price: 2337.07, desc: "Expand your laptop's connectivity with multiple ports.", stock: 75 },
-    { id: 14, name: "Portable Power Bank 20K", price: 2632.50, desc: "High-capacity power bank for multiple charges.", stock: 90 },
-    { id: 15, name: "VR Headset", price: 23365.50, desc: "Immersive virtual reality experience.", stock: 11 },
-    { id: 16, name: "Stylus Pen Pro", price: 1169.44, desc: "Precision stylus for tablets and touchscreens.", stock: 100 },
-    { id: 17, name: "Smart Home Hub", price: 5206.50, desc: "Control all your smart devices from one place.", stock: 14 },
-    { id: 18, name: "Laser Projector Compact", price: 35041.50, desc: "Portable projector for a cinema experience anywhere.", stock: 7 },
-    { id: 19, name: "Gaming Headset Elite", price: 4414.67, desc: "Comfortable over-ear headset with clear mic.", stock: 33 },
-    { id: 20, name: "Tablet Slim 11-inch", price: 23341.50, desc: "Lightweight tablet perfect for media consumption.", stock: 16 }
+
+    const productList = [
+    { id: 1, name: "Laptop Pro X", price: 75988.50, desc: "High-performance laptop for professionals.", stock: 10, image: 'assets/laptop.svg' },
+    { id: 2, name: "Wireless Headphones Z", price: 11699.42, desc: "Noise-cancelling headphones with deep bass.", stock: 25, image: 'assets/headphones.svg' },
+    { id: 3, name: "Smartphone 15 Ultra", price: 58441.50, desc: "Latest flagship smartphone with advanced camera.", stock: 15, image: 'assets/smartphone.svg' },
+    { id: 4, name: "Smart Watch 6", price: 14595.75, desc: "Fitness and health tracker with 5-day battery life.", stock: 30, image: 'assets/smartwatch.svg' },
+    { id: 5, name: "Portable SSD 1TB", price: 5264.42, desc: "Ultra-fast external storage for backups and transfers.", stock: 40, image: 'assets/ssd.svg' },
+    { id: 6, name: "Gaming Mouse RGB", price: 2924.42, desc: "Ergonomic gaming mouse with customizable RGB lighting.", stock: 50, image: 'assets/mouse.svg' },
+    { id: 7, name: "Mechanical Keyboard", price: 6950.10, desc: "Tactile mechanical keyboard for typing and gaming.", stock: 20, image: 'assets/keyboard.svg' },
+    { id: 8, name: "Bluetooth Speaker Mini", price: 2047.50, desc: "Pocket-sized speaker with powerful sound.", stock: 60, image: 'assets/speaker.svg' },
+    { id: 9, name: "4K Webcam", price: 4679.42, desc: "High-resolution webcam for streaming and video calls.", stock: 18, image: 'assets/webcam.svg' },
+    { id: 10, name: "E-Reader Paperbook 4", price: 7604.94, desc: "Glare-free screen for comfortable reading.", stock: 22, image: 'assets/ereader.svg' },
+    { id: 11, name: "Mesh Wi-Fi System", price: 11641.50, desc: "Blanket your home with fast, reliable Wi-Fi.", stock: 12, image: 'assets/router.svg' },
+    { id: 12, name: "Drone Explorer SE", price: 20474.92, desc: "Foldable drone with 4K video recording.", stock: 8, image: 'assets/drone.svg' },
+    { id: 13, name: "USB-C Hub 7-in-1", price: 2337.07, desc: "Expand your laptop's connectivity with multiple ports.", stock: 75, image: 'assets/hub.svg' },
+    { id: 14, name: "Portable Power Bank 20K", price: 2632.50, desc: "High-capacity power bank for multiple charges.", stock: 90, image: 'assets/powerbank.svg' },
+    { id: 15, name: "VR Headset", price: 23365.50, desc: "Immersive virtual reality experience.", stock: 11, image: 'assets/vr.svg' },
+    { id: 16, name: "Stylus Pen Pro", price: 1169.44, desc: "Precision stylus for tablets and touchscreens.", stock: 100, image: 'assets/stylus.svg' },
+    { id: 17, name: "Smart Home Hub", price: 5206.50, desc: "Control all your smart devices from one place.", stock: 14, image: 'assets/smarthome.svg' },
+    { id: 18, name: "Laser Projector Compact", price: 35041.50, desc: "Portable projector for a cinema experience anywhere.", stock: 7, image: 'assets/projector.svg' },
+    { id: 19, name: "Gaming Headset Elite", price: 4414.67, desc: "Comfortable over-ear headset with clear mic.", stock: 33, image: 'assets/gamingheadset.svg' },
+    { id: 20, name: "Tablet Slim 11-inch", price: 23341.50, desc: "Lightweight tablet perfect for media consumption.", stock: 16, image: 'assets/tablet.svg' }
 ];
 
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
-async function fetchProductImage(query) {
-    // Try to fetch an image from Pexels using the product name.
-    // Note: the API key must be valid and the browser must allow the request (CORS).
-    // If the API fails or returns no photos, return a small placeholder sized 100x70.
+function deriveImageQueryFromName(name) {
+    // Try to extract meaningful keywords from the product name to improve image search.
+    // This keeps electronics/gadget-related queries instead of generic words.
+    if (!name) return 'electronics device';
+    // Lowercase, remove punctuation and numbers, split words
+    const cleaned = name.replace(/[\d\W_]+/g, ' ').toLowerCase().trim();
+    const words = cleaned.split(/\s+/).filter(Boolean);
+    // common nouns related to electronics we prefer
+    const preferred = ['laptop','phone','smartphone','headphones','watch','ssd','keyboard','mouse','speaker','webcam','drone','power','tablet','projector','vr','stylus','charger','hub','reader','speaker','router'];
+    // find first preferred word in name
+    for (const w of words) {
+        if (preferred.includes(w)) return `${w} electronics`;
+    }
+    // otherwise use the first two words plus 'electronics'
+    return `${words.slice(0,2).join(' ')} electronics`;
+}
+
+async function fetchProductImage(productOrQuery) {
+    // Accept either a product object (preferred) or a string query.
+    let query = typeof productOrQuery === 'string' ? productOrQuery : null;
+    if (!query && productOrQuery && typeof productOrQuery === 'object') {
+        query = productOrQuery.imageQuery || deriveImageQueryFromName(productOrQuery.name || productOrQuery.title);
+    }
+    query = query || 'electronics device';
+
     try {
         const res = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=1`, {
-            headers: {
-                Authorization: PEXELS_API_KEY
-            }
+            headers: { Authorization: PEXELS_API_KEY }
         });
         if (!res.ok) throw new Error(`Pexels API returned status ${res.status}`);
         const data = await res.json();
         const photo = data.photos?.[0];
-        if (!photo) return `https://picsum.photos/200/140?random=${Math.random()}`;
-        // prefer a small/tiny size then fall back to medium/original
+        if (!photo) return `https://picsum.photos/100/70?random=${Math.random()}`;
         return photo.src.tiny || photo.src.small || photo.src.medium || photo.src.original;
     } catch (err) {
-        console.error("Error fetching image for", query, err);
-        // Small placeholder (100x70) so layout stays consistent
-        return `https://picsum.photos/200/140?random=${Math.random()}`;
+        console.error('Error fetching image for', query, err);
+        return `https://picsum.photos/100/70?random=${Math.random()}`;
     }
 }
 
@@ -72,12 +90,11 @@ function renderProducts() {
         const col = document.createElement('div');
         col.className = 'col';
 
-        // Render a small image (100x70) at the top of the card. We'll set a placeholder
-        // first and then asynchronously fetch a better image from the Pexels API.
+        // Render a small image (100x70) at the top of the card using local SVG asset.
         col.innerHTML = `
             <div class="card h-100 shadow-sm d-flex flex-column">
                 <div class="p-3 d-flex justify-content-center">
-                    <img src="https://picsum.photos/100/70?random=${Math.random()}" alt="${prod.name}" 
+                    <img src="${prod.image}" alt="${prod.name}" 
                          class="product-thumb" style="width:100px;height:70px;object-fit:cover;border-radius:4px;">
                 </div>
                 <div class="card-body d-flex flex-column">
@@ -88,20 +105,7 @@ function renderProducts() {
                 </div>
             </div>
         `;
-        // After we've appended the element, try to fetch a relevant image.
         productListEl.appendChild(col);
-
-        // Asynchronously replace the placeholder with a fetched image.
-        (async () => {
-            const imgEl = col.querySelector('img.product-thumb');
-            try {
-                const src = await fetchProductImage(prod.name);
-                if (imgEl) imgEl.src = src;
-            } catch (e) {
-                // leave placeholder if fetching fails
-                console.warn('Image fetch failed for', prod.name, e);
-            }
-        })();
     });
 
     document.querySelectorAll('.btn-add-to-cart').forEach(button => {
