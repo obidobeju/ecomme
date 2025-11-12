@@ -37,9 +37,18 @@ function isAdmin() {
 
 // Logout user
 function logout() {
-    clearAuth();
-    // Force page reload to update UI
-    window.location.href = 'index.html?t=' + new Date().getTime();
+    try {
+        clearAuth();
+        // Force complete cache bust and page reload
+        const timestamp = new Date().getTime();
+        window.location.href = 'index.html?logout=' + timestamp;
+    } catch (e) {
+        console.error('Logout error:', e);
+        // Fallback: just clear storage and reload
+        localStorage.clear();
+        sessionStorage.clear();
+        location.reload(true);
+    }
 }
 
 // Register user
@@ -304,4 +313,19 @@ function requireAdmin() {
 }
 
 // Initialize auth UI on page load
-document.addEventListener('DOMContentLoaded', updateAuthUI);
+document.addEventListener('DOMContentLoaded', () => {
+    updateAuthUI();
+    // Re-check auth status when page becomes visible (tab focus)
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            updateAuthUI();
+        }
+    });
+});
+
+// Also update UI immediately if script loads after DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', updateAuthUI);
+} else {
+    updateAuthUI();
+}
