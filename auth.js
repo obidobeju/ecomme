@@ -38,7 +38,8 @@ function isAdmin() {
 // Logout user
 function logout() {
     clearAuth();
-    window.location.href = 'index.html';
+    // Force page reload to update UI
+    window.location.href = 'index.html?t=' + new Date().getTime();
 }
 
 // Register user
@@ -266,7 +267,7 @@ function updateAuthUI() {
 
     if (!authContainer) return;
 
-    if (user) {
+    if (user && isAuthenticated()) {
         // User is logged in
         authContainer.innerHTML = `
             <div class="d-flex align-items-center gap-2">
@@ -276,7 +277,8 @@ function updateAuthUI() {
             </div>
         `;
     } else {
-        // User not logged in
+        // User not logged in - clear any stale data
+        clearAuth();
         authContainer.innerHTML = `
             <div class="d-flex gap-2">
                 <a href="login.html" class="btn btn-sm btn-outline-primary"><i class="fas fa-sign-in-alt me-1"></i> Login</a>
