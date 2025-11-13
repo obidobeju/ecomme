@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -15,6 +16,9 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://bejuuuu:OBIDO01@cluste
 // --- MIDDLEWARE ---
 app.use(cors());
 app.use(express.json());
+
+// Serve static files (HTML, CSS, JS, assets)
+app.use(express.static(path.join(__dirname, '..')));
 
 // JWT verification middleware
 function verifyToken(req, res, next) {
